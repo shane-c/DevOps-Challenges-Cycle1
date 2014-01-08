@@ -7,8 +7,8 @@ use OpenCloud\Compute\Constants\ServerState;
 
 $ini = parse_ini_file(".rackspace_cloud_credentials", TRUE);
 $client = new Rackspace(Rackspace::US_IDENTITY_ENDPOINT, array(
-    'username' => $ini['authentication']['username'],
-    'apiKey'   => $ini['authentication']['apikey']
+    'username' => $ini['username'],
+    'apiKey'   => $ini['apikey']
 ));
 
 $compute = $client->computeService('cloudServersOpenStack', 'IAD');

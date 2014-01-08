@@ -7,8 +7,8 @@ use OpenCloud\Compute\Constants\ServerState;
 
 $ini = parse_ini_file(".rackspace_cloud_credentials", TRUE);
 $client = new Rackspace(Rackspace::US_IDENTITY_ENDPOINT, array(
-    'username' => $ini['authentication']['username'],
-    'apiKey'   => $ini['authentication']['apikey']
+    'username' => $ini['username'],
+    'apiKey'   => $ini['apikey']
 ));
 
 function getInput($msg){
@@ -17,13 +17,14 @@ function getInput($msg){
   return $varin;
 }
 
-$numServers = 1;
+//$numServers = 1;
 do {
   $numServers = getInput("Enter how many servers to build 1-3");
 }
 while (!($numServers <= 3 and $numServers > 0));
 
 $nameServers = getInput("Enter name of servers");
+$sshkey = getInput("Enter location of SSH key");
 $compute = $client->computeService('cloudServersOpenStack', 'IAD');
 $fivetwelveFlavor = $compute->flavor('2');
 $ubuntu = $compute->image('80fbcb55-b206-41f9-9bc2-2dd7aac6c061');
@@ -37,8 +38,8 @@ for ($i=1; $i <= $numServers; $i++) {
         	'image'    => $ubuntu,
         	'flavor'   => $fivetwelveFlavor,
 		'keypair'  => array(
-          	  'name'      => 'mykey',
-          	  'publicKey' => file_get_contents('ssh/testssh.pub')
+          	  'name'      => 'testssh.pub',
+          	  'publicKey' => file_get_contents($sshkey)
 		),
         	'networks' => array(
             		$compute->network(Network::RAX_PUBLIC),
@@ -73,4 +74,5 @@ for ($i=1; $i <= $numServers; $i++) {
 	printf("IP is %s, root password is %s\n",
     	$server->accessIPv4, $server->adminPass);	
 }
+
 ?>
