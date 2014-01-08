@@ -17,7 +17,6 @@ function getInput($msg){
   return $varin;
 }
 
-//$numServers = 1;
 do {
   $numServers = getInput("Enter how many servers to build 1-3");
 }
@@ -33,19 +32,16 @@ $server = $compute->server();
 for ($i=1; $i <= $numServers; $i++) {
 	$name = $nameServers . $i;
 	try {
-    		$response = $server->create(array(
+	   $server->addFile('/root/.ssh/authorized_keys',file_get_contents($sshkey));
+    	   $response = $server->create(array(
         	'name'     => $name,
         	'image'    => $ubuntu,
         	'flavor'   => $fivetwelveFlavor,
-		'keypair'  => array(
-          	  'name'      => 'testssh.pub',
-          	  'publicKey' => file_get_contents($sshkey)
-		),
         	'networks' => array(
             		$compute->network(Network::RAX_PUBLIC),
             		$compute->network(Network::RAX_PRIVATE)
-        	)
-    	));
+           	)
+    	  ));
 	} catch (\Guzzle\Http\Exception\BadResponseException $e) {
 
     		$responseBody = (string) $e->getResponse()->getBody();
